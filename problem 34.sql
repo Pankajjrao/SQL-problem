@@ -71,3 +71,29 @@ where month(created_at) = 2 and year(created_at) = 2020
 group by mv.title
 order by avg_rating desc, mv.title asc
 limit 1;
+
+
+-- ouput after doing union all
+select x.name  as results
+from (
+		select u.name,count(*) as rating_count
+		from movierating m
+		inner join users_movies u
+		on m.user_id = u.user_id
+		group by u.name
+		order by rating_count desc, u.name asc 
+		limit 1
+        ) x
+Union all
+select y.title
+from (
+		select mv.title, avg(rating) as avg_rating
+		from movierating m 
+		inner join movies mv
+		on m.movie_id = mv.movie_id
+		where month(created_at) = 2 and year(created_at) = 2020
+		group by mv.title
+		order by avg_rating desc, mv.title asc
+		limit 1
+        ) y;
+
